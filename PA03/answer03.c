@@ -80,10 +80,10 @@ int * readIntegers(const char * filename, int * numberOfIntegers)
 
   *numberOfIntegers = counter;
   
-  array = malloc(sizeof(int)*counter);
-
   fclose(fptr);
   fptr = fopen(filename, "r");
+
+  array = malloc(sizeof(int)*counter);
 
   while (fscanf(fptr, "%d", &temp) == 1)
     {
@@ -132,60 +132,43 @@ int * readIntegers(const char * filename, int * numberOfIntegers)
  * sort.
  *
  */
-int sorthelp(int * arr, int index1, int index2)
+void sorthelp(int * arr, int index1, int index2)
 {
-  int temp = 0;
+  int pivot = 0;
   int left = 0;
   int right = 0;
-  int pivot = 0;
-  int track = 0;
-
-  if((index2) <= index1)
-    {
-      return *arr;
-    }
+  int temp = 0;
   
-  left = index1 + 1;
-  right = index2;
-  pivot = arr[index1];
-
-  while(right > left)
+  if (index1 < index2)
     {
-      while((arr[left] < pivot) && (left < (index2 - 1)))
+      pivot = index1;
+      left = index1;
+      right = index2;
+      
+      while (left < right)
 	{
-	  left++;
+	  while (arr[left] < arr[pivot] && left <= index2)
+	    {
+	      left++;
+	    }
+	  while (arr[right] > arr[pivot] && right >= index1)
+	    {
+	      right--;
+	    }
+	  if (left < right)
+	    {
+	      temp = arr[left];
+	      arr[left] = arr[right];
+	      arr[right] = temp;
+	    }
 	}
-      while((arr[right] > pivot) && (right > (index1 + 1)))
-	{
-	  right--;
-	}
-      if(left != right)
-	{
-	  temp = arr[left];
-	  arr[left] = arr[right];
-	  arr[right] = temp;
-	}
-      left++;
-      right--;
-      track++;
+      temp = arr[right];
+      arr[right] = arr[pivot];
+      arr[pivot] = temp;
+      
+      sorthelp(arr, index1, right - 1);
+      sorthelp(arr, right + 1, index2);  
     }
-  if(arr[index1] > arr[left - track])
-    {
-      temp = arr[index1];
-      arr[index1] = arr[left - track];
-      arr[left - track] = temp;
-    }
-
-  if (index1 < (left - 1 - track))
-    {
-      sorthelp(arr, index1, (left - 1 - track));
-    }
-  if ((left + 1) < index2)
-    {
-      sorthelp(arr, (left + 1), index2);
-    }
-
-  return *arr;
 }
     
 void sort(int * arr, int length)
@@ -249,11 +232,14 @@ int searchhelp(int * arr, int low, int high, int key)
     {
       return index;
     }
-  if(arr[index] > key)
+  else if(arr[index] > key)
     {
       return searchhelp(arr, low, index - 1, key);
     }
-  return searchhelp(arr, index + 1, high, key);
+  else
+    {
+      return searchhelp(arr, index + 1, high, key);
+    }
 }
 
 int search(int * arr, int length, int key)

@@ -347,10 +347,53 @@ void partitionOddAndEven(int value)
  * generates invalid partitions and checks validity before printing.
  */
 
+int check_prime(int val)
+{
+  int track = 0;
+  int lcv;
+  
+  for (lcv = 1; lcv <= val; lcv++)
+    {
+      if ((val % lcv) == 0)
+	{
+	  track++;
+	}
+    }
 
+  return track;
+}
+  
+void partition_prime(int * arr, int index, int n)
+{
+  int test;
+  int track = 0;
+
+  if (n == 0)
+    {
+      printf("= ");
+      printpartition(arr, index);
+      return;
+    }
+  else
+    {
+      for (test = 1; test <= n; test++)
+	{
+	  track = check_prime(test);
+	  if ((track <= 2) && (test != 1))
+	    {
+	      arr[index] = test;
+	      partition_prime(arr, index + 1, n - test);
+	    }
+	}
+    }
+}
 
 void partitionPrime(int value)
 {
+  int * arr;
+  
   printf("partitionPrime %d\n", value);
-
+  arr = malloc(sizeof(int) * value);
+  partition_prime(arr, 0, value);
+  free (arr);
 }

@@ -88,16 +88,45 @@ void partitionAll(int value)
  * generates invalid partitions and checks validity before printing.
  *
  */
-
-void partition_inc(int * arr, int index, int n, int check)
+int order_inc(int * arr, int count, int index, int ref)
 {
   int test;
+  int check;
 
-  if ((n == 0) && (check >= index))
+  for (test = 0; test < index; test++)
     {
-      //printf("= ");
-      printpartition(arr, index);
-      return;
+      check += arr[test];
+    }
+
+  if (check > ref)
+    {
+      return 0;
+    }
+    
+  for (test = 0; test < index; test++)
+    {
+      if (arr[test] < arr[test + 1])
+	{
+	  count++;
+	}
+    }
+  return count;
+}
+  
+void partition_inc(int * arr, int index, int n, int check, int ref)
+{
+  int test;
+  int count = 0;
+
+  if ((n == 0) && (check >= index) && (arr[0] < (ref / 2)))
+    {
+      count = order_inc(arr, count, index, ref);
+      if (count == (index - 1))
+      {
+	printf("= ");
+	printpartition(arr, index);
+	return;
+      }
     }
   else
     {
@@ -108,7 +137,7 @@ void partition_inc(int * arr, int index, int n, int check)
 	      arr[index] = test;
 	      check++;
 	    }
-	  partition_inc(arr, index + 1, n - test, check);
+	  partition_inc(arr, index + 1, n - test, check, ref);
 	}
     }
 }
@@ -118,8 +147,9 @@ void partitionIncreasing(int value)
   int check = 0;
   
   printf("partitionIncreasing %d\n", value);
+  printf("= %d\n", value);
   arr = malloc(sizeof(int) * value);
-  partition_inc(arr, 0, value, check);
+  partition_inc(arr, 0, value, check, value);
   free (arr);
 }
 
@@ -142,13 +172,60 @@ void partitionIncreasing(int value)
  *
  */
 
+int order_dec(int * arr, int count, int index)
+{
+  int test;
+    
+  for (test = 0; test < index; test++)
+    {
+      if (arr[test] > arr[test + 1])
+	{
+	  count++;
+	}
+    }
+  return count;
+}
+  
+void partition_dec(int * arr, int index, int n, int check, int ref)
+{
+  int test;
+  int count = 0;
+
+  if ((n == 0) && (check >= index) && (arr[0] > (ref / 2)))
+    {
+      //printf("= ");
+      count = order_dec(arr, count, index);
+      if (count == (index - 1))
+      {
+	  printpartition(arr, index);
+	  return;
+      }
+    }
+  else
+    {
+      for (test = n; test >= 1; test--)
+	{
+	  if (test > check)
+	    {
+	      arr[index] = test;
+	      check++;
+	    }
+	  partition_dec(arr, index + 1, n - test, check, ref);
+	}
+    }
+}
 
 void partitionDecreasing(int value)
 {
-  printf("partitionDecreasing %d\n", value);
+  int * arr;
+  int check = 0;
   
+  printf("partitionDecreasing %d\n", value);
+  arr = malloc(sizeof(int) * value);
+  partition_inc(arr, 0, value, check, value);
+  free (arr);
+}  
 
-}
 
 /*
  * =================================================================

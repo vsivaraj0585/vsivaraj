@@ -1,0 +1,16 @@
+input file format:
+<method> <value to partition>
+
+methods:
+1. All
+2. Increasing
+3. Decreasing
+4. Odd
+5. Even
+6. OddAndEven
+7. Prime
+
+current method: 6
+current value: 30
+Start Partitioning...
+partitionOddAndEven 30

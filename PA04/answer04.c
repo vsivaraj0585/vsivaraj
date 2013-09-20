@@ -15,7 +15,7 @@
 #include "pa04.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+
 
 
 /*
@@ -70,6 +70,7 @@ void partitionAll(int value)
   partition_all(arr, 0, value);
   free (arr);
 }
+
 /*
  * =================================================================
  * This function prints the partitions that use increasing values.
@@ -88,68 +89,34 @@ void partitionAll(int value)
  * generates invalid partitions and checks validity before printing.
  *
  */
-int order_inc(int * arr, int count, int index, int ref)
+
+void partition_inc(int * arr, int index, int n)
 {
   int test;
-  int check;
 
-  for (test = 0; test < index; test++)
+  if (n == 0)
     {
-      check += arr[test];
+      printf("= ");
+      printpartition(arr, index);
+      return;
     }
-
-  if (check > ref)
+  for (test = 1; test <= n; test++)
     {
-      return 0;
-    }
-    
-  for (test = 0; test < index; test++)
-    {
-      if (arr[test] < arr[test + 1])
+      if ((arr[index - 1] < test) || (index == 0))
 	{
-	  count++;
-	}
-    }
-  return count;
-}
-  
-void partition_inc(int * arr, int index, int n, int check, int ref)
-{
-  int test;
-  int count = 0;
-
-  if ((n == 0) && (check >= index) && (arr[0] < (ref / 2)))
-    {
-      count = order_inc(arr, count, index, ref);
-      if (count == (index - 1))
-      {
-	printf("= ");
-	printpartition(arr, index);
-	return;
-      }
-    }
-  else
-    {
-      for (test = 1; test <= n; test++)
-	{
-	  if (test > check)
-	    {
-	      arr[index] = test;
-	      check++;
-	    }
-	  partition_inc(arr, index + 1, n - test, check, ref);
+	  arr[index] = test;
+	  partition_inc(arr, index + 1, n - test);
 	}
     }
 }
+
 void partitionIncreasing(int value)
 {
   int * arr;
-  int check = 0;
   
   printf("partitionIncreasing %d\n", value);
-  printf("= %d\n", value);
   arr = malloc(sizeof(int) * value);
-  partition_inc(arr, 0, value, check, value);
+  partition_inc(arr, 0, value);
   free (arr);
 }
 
@@ -172,45 +139,22 @@ void partitionIncreasing(int value)
  *
  */
 
-int order_dec(int * arr, int count, int index)
+void partition_dec(int * arr, int index, int n)
 {
   int test;
-    
-  for (test = 0; test < index; test++)
-    {
-      if (arr[test] > arr[test + 1])
-	{
-	  count++;
-	}
-    }
-  return count;
-}
-  
-void partition_dec(int * arr, int index, int n, int check, int ref)
-{
-  int test;
-  int count = 0;
 
-  if ((n == 0) && (check >= index) && (arr[0] > (ref / 2)))
+  if (n == 0)
     {
-      //printf("= ");
-      count = order_dec(arr, count, index);
-      if (count == (index - 1))
-      {
-	  printpartition(arr, index);
-	  return;
-      }
+      printf("= ");
+      printpartition(arr, index);
+      return;
     }
-  else
+  for (test = 1; test <= n; test++)
     {
-      for (test = n; test >= 1; test--)
+      if ((arr[index - 1] > test) || (index == 0))
 	{
-	  if (test > check)
-	    {
-	      arr[index] = test;
-	      check++;
-	    }
-	  partition_dec(arr, index + 1, n - test, check, ref);
+	  arr[index] = test;
+	  partition_dec(arr, index + 1, n - test);
 	}
     }
 }
@@ -218,14 +162,13 @@ void partition_dec(int * arr, int index, int n, int check, int ref)
 void partitionDecreasing(int value)
 {
   int * arr;
-  int check = 0;
   
   printf("partitionDecreasing %d\n", value);
   arr = malloc(sizeof(int) * value);
-  partition_inc(arr, 0, value, check, value);
+  partition_dec(arr, 0, value);
   free (arr);
-}  
 
+}
 
 /*
  * =================================================================
@@ -243,6 +186,7 @@ void partitionDecreasing(int value)
  * The program should generate only valid partitions.  Do not
  * generates invalid partitions and checks validity before printing.
  */
+
 
 void partition_odd(int * arr, int index, int n)
 {
@@ -271,8 +215,9 @@ void partitionOdd(int value)
   printf("partitionOdd %d\n", value);
   arr = malloc(sizeof(int) * value);
   partition_odd(arr, 0, value);
-  free (arr); 
+  free (arr);
 }
+
 
 /*
  * =================================================================
@@ -292,6 +237,7 @@ void partitionOdd(int value)
  * The program should generate only valid partitions.  Do not
  * generates invalid partitions and checks validity before printing.
  */
+
 void partition_even(int * arr, int index, int n)
 {
   int test;
@@ -318,8 +264,9 @@ void partitionEven(int value)
   printf("partitionEven %d\n", value);
   arr = malloc(sizeof(int) * value);
   partition_even(arr, 0, value);
-  free (arr); 
+  free (arr);
 }
+
 
 /*
  * =================================================================
@@ -338,7 +285,6 @@ void partitionEven(int value)
  * The program should generate only valid partitions.  Do not
  * generates invalid partitions and checks validity before printing.
  */
-
 
 void partition_oddeven(int * arr, int index, int n, int check)
 {
@@ -381,8 +327,9 @@ void partitionOddAndEven(int value)
   printf("partitionOddAndEven %d\n", value);
   arr = malloc(sizeof(int) * value);
   partition_oddeven(arr, 0, value, check);
-  free (arr); 
+  free (arr);
 }
+
 
 /*
  * =================================================================

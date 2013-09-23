@@ -102,7 +102,7 @@ void partition_inc(int * arr, int index, int n)
     }
   for (test = 1; test <= n; test++)
     {
-      if ((arr[index - 1] < test) || (index == 0))
+      if ((index == 0) || (arr[index - 1] < test))
 	{
 	  arr[index] = test;
 	  partition_inc(arr, index + 1, n - test);
@@ -151,7 +151,7 @@ void partition_dec(int * arr, int index, int n)
     }
   for (test = 1; test <= n; test++)
     {
-      if ((arr[index - 1] > test) || (index == 0))
+      if ((index == 0) || (arr[index - 1] > test))
 	{
 	  arr[index] = test;
 	  partition_dec(arr, index + 1, n - test);

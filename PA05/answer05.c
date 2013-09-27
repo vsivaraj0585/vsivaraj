@@ -66,7 +66,7 @@ int * readInteger(char * filename, int * numInteger)
   int counter = 0;
   int temp = 0;
   int *array;
-  int ind;
+  int ind = 0;
   FILE * fptr = fopen(filename, "r");
   
   if (fptr == NULL)
@@ -85,9 +85,10 @@ int * readInteger(char * filename, int * numInteger)
   
   array = malloc(sizeof(int)*counter);
   
-  for(ind = 0; ind < counter; ind++)
+  while (ind < counter)
     {
       fscanf(fptr, "%d", &array[ind]);
+      ind++;
     }
   fclose(fptr);
   
@@ -166,8 +167,8 @@ char * * readString(char * filename, int * numString)
   int numLine = 0;
   char * * strArr;
   int ind = 0;
-  
   FILE *fptr = fopen(filename, "r");
+  
   if(fptr == NULL)
     {
       return NULL;
@@ -178,8 +179,9 @@ char * * readString(char * filename, int * numString)
       numLine++;
     }
   
-  strArr = malloc(sizeof(char*)*numLine);
+  *numString = numLine;
   fseek(fptr, 0, SEEK_SET);
+  strArr = malloc(sizeof(char*) *numLine);
 
   while(fgets(buf, MAXIMUM_LENGTH, fptr) != NULL)
     {
@@ -279,7 +281,8 @@ int saveInteger(char * filename, int * arrInteger, int numInteger)
     {
       fprintf(fptr, "%d\n", arrInteger[ind]);
     }
-
+  
+  //fclose(fptr);
   return 1;
 }
 
@@ -314,7 +317,8 @@ int saveString(char * filename, char * * arrString, int numString)
     {
       fprintf(fptr, "%s\n", arrString[ind]);
     }
-
+  
+  //fclose(fptr);
   return 1;
 }
 
@@ -342,7 +346,7 @@ int compint(const void * p1, const void * p2)
       return 0;
     }
 
-  return 1;
+      return 1;
 }
 
 void sortInteger(int * arrInteger, int numInteger)

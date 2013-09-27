@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "pa05.h"
-#define MAXIMUM_LENGTH 80
 
 /*
  * Read a file of integers.
@@ -93,6 +92,7 @@ int * readInteger(char * filename, int * numInteger)
   fclose(fptr);
   
   return array;
+
 }
 
 /* ----------------------------------------------- */
@@ -182,7 +182,7 @@ char * * readString(char * filename, int * numString)
   *numString = numLine;
   fseek(fptr, 0, SEEK_SET);
   strArr = malloc(sizeof(char*) *numLine);
-
+  
   while(fgets(buf, MAXIMUM_LENGTH, fptr) != NULL)
     {
       strArr[ind] = malloc(sizeof(char) * (strlen(buf) + 1));
@@ -201,11 +201,11 @@ char * * readString(char * filename, int * numString)
 void printInteger(int * arrInteger, int numInteger)
 {
   int ind;
-
-  for(ind = 0; ind < numInteger; ind++)
-    {
-      printf("%d\n", arrInteger[ind]);
-    }
+ 
+ for(ind = 0; ind < numInteger; ind++)
+   {
+     printf("%d\n", arrInteger[ind]);
+   }
 }
 
 /* ----------------------------------------------- */
@@ -217,10 +217,10 @@ void printInteger(int * arrInteger, int numInteger)
 void printString(char * * arrString, int numString)
 {
   int ind;
-
+  
   for(ind = 0; ind < numString; ind++)
     {
-      printf("%s\n", arrString[ind]);
+      printf("%s", arrString[ind]);
     }
 }
 
@@ -282,7 +282,6 @@ int saveInteger(char * filename, int * arrInteger, int numInteger)
       fprintf(fptr, "%d\n", arrInteger[ind]);
     }
   
-  //fclose(fptr);
   return 1;
 }
 
@@ -318,7 +317,6 @@ int saveString(char * filename, char * * arrString, int numString)
       fprintf(fptr, "%s\n", arrString[ind]);
     }
   
-  //fclose(fptr);
   return 1;
 }
 
@@ -346,7 +344,7 @@ int compint(const void * p1, const void * p2)
       return 0;
     }
 
-      return 1;
+  return 1;
 }
 
 void sortInteger(int * arrInteger, int numInteger)
@@ -364,15 +362,14 @@ void sortInteger(int * arrInteger, int numInteger)
  * Hint: use strcmp in the comparison function
  *
  */
-
 int compstr(const void * p1, const void * p2)
 {
   char * * strp1 = (char * *)p1;
   char * * strp2 = (char * *)p2;
   char *strv1 = *strp1;
   char *strv2 = *strp2;
-
-  return strcmp(strv1, strv2);
+  
+  return strcmp(strv1,strv2);
 }
 
 void sortString(char * * arrString, int numString)

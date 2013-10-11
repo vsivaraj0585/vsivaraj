@@ -161,10 +161,11 @@
  *
  * Good luck.
  */
+
 struct Image * loadImage(const char* filename)
 {
   FILE * fh;
-  //int test;
+  uint8_t test_data;
   
   fh = fopen(filename, "r");
   if(fh == NULL)
@@ -174,31 +175,56 @@ struct Image * loadImage(const char* filename)
 
   struct ImageHeader * Header = malloc(sizeof(struct ImageHeader));
   
-  if(((fread(Header, 16, 1, fh)) == 0) || (Header->magic_bits != ECE264_IMAGE_MAGIC_BITS) || (Header->width < 1) || (Header->height < 1))
+  if(((fread(Header, 16, 1, fh)) != 1) || (Header->magic_bits != ECE264_IMAGE_MAGIC_BITS) || (Header->width < 1) || (Header->height < 1))
     {
+      fclose(fh);
       free(Header);
       return NULL;
     }
 
-  struct Image * IMG = malloc(sizeof(struct Image));
-  IMG->comment = malloc(sizeof(char)* Header->comment_len);
-  if(IMG->comment == NULL || (fread(IMG->comment, sizeof(char), Header->comment_len, fh) == 0))
+  struct Image *IMG = malloc(sizeof(struct Image));
+
+  IMG->comment = malloc(sizeof(char) * Header->comment_len);
+  if(IMG->comment == NULL)
     {
       free(Header);
+      fclose(fh);
+      free(IMG->comment);
+      free(IMG);
       return NULL;
     }
 
-  IMG->data = malloc(sizeof(uint8_t)* (Header->width * Header->height));
-  if(IMG->data == NULL || ((fread(IMG->data, sizeof(uint8_t), (Header->width * Header->height), fh)) == 0))
+  if((fread(IMG->comment, sizeof(char), Header->comment_len, fh)) != 1)
     {
       free(Header);
+      fclose(fh);
+      free(IMG->comment);
+      free(IMG);
       return NULL;
     }
 
-  uint8_t test_data;
-  if((fread(&test_data, sizeof(uint8_t), 1, fh)) != 0);
+  IMG->data = malloc(sizeof(uint8_t) * (Header->width*Header->height));
+
+  if(IMG->data == NULL)
+    {
+      free(Header);
+      fclose(fh);
+      free(IMG);
+      return NULL;
+    }
+  if((fread(IMG->data, sizeof(uint8_t), (Header->width*Header->height), fh)) == 0)
+    {
+      free(Header);
+      fclose(fh);
+      freeImage(IMG);
+      return NULL;
+    }
+
+  if(fread(&test_data, sizeof(uint8_t), 1, fh) != 0)
   {
     free(Header);
+    fclose(fh);
+    freeImage(IMG);
     return NULL;
   }
 
@@ -210,7 +236,6 @@ struct Image * loadImage(const char* filename)
 
   return IMG;
 }
-
 
 /*
  * ===================================================================
@@ -226,6 +251,8 @@ void freeImage(struct Image * image)
 {
   if(image != NULL)
     {
+      free(image->comment);
+      free(image->data);
       free(image);
     }
 }

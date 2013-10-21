@@ -40,7 +40,7 @@ void List_destroy(Node * head)
       p = head -> next;
       free (head);
       head = p;
-    }
+      }
 }
 
 /**
@@ -59,9 +59,9 @@ void List_destroy(Node * head)
 Node * List_create(int value, int index)
 {
   Node * ln = malloc(sizeof(Node));
-  ln -> next = NULL;
   ln -> index = index;
   ln -> value = value;
+  ln -> next = NULL;
 
   return ln;
 }
@@ -105,9 +105,9 @@ Node * List_build(int * value, int * index, int length)
   while(lcv < length)
     {
       if(index[lcv] != 0)
-	{
+      {
 	  head = List_insert_ascend(head, value[lcv], index[lcv]);
-	}
+      }
       lcv++;
     }
   return head;
@@ -139,19 +139,21 @@ Node * List_insert_ascend(Node * head, int value, int index)
     {
       return List_create(value, index);
     }
-  if ((head -> index) == value)
+  if (head -> index == index)
     {
+      head -> value = head -> value + value;
       return head;
     }
-  if ((head -> index) > value)
+  if ((head -> index) > index)
     {
-      Node * p = List_create(value, index);
-      p -> next = head;
-      return p;
+      Node * ptr = List_create(value, index);
+      ptr -> next = head;
+      return ptr;
     }
   head -> next = List_insert_ascend(head -> next, value, index);
 
   return head;
+ 
 }
 
 
@@ -167,33 +169,17 @@ Node * List_insert_ascend(Node * head, int value, int index)
  */
 Node * List_delete(Node * head, int index)
 {
-  Node * ptr = head;
-  
   if (head == NULL)
     {
       return head;
     }
-  //st_delete(head -> next, index);
-  //ee(head);
-  if (ptr -> index == index)
+  if ((head -> index) == index)
     {
-      ptr = ptr -> next;
+      Node * ptr = head -> next;
       free(head);
       return ptr;
     }
-
-  Node * itr = ptr -> next;
-  while((itr != NULL) && ((itr -> index) != index))
-    {
-      ptr = ptr -> next;
-      itr = itr -> next;
-    }
-  if (itr != NULL)
-    {
-      itr -> next = itr -> next;
-      free(itr);
-    }
-
+  head -> next = List_delete(head -> next, index);
   return head;
 }
 
@@ -216,35 +202,13 @@ Node * List_delete(Node * head, int index)
  */
 Node * List_copy(Node * head)
 {
-  /*Node * head3 = List_create((head -> value), (head -> index));
-
-  if ((head3 -> index) == (head -> index))
-    {
-       head3 -> value += head -> value;
-    }
-  if ((head3 -> index) > (head -> index))
-    {
-      Node * p = List_create((head -> value), (head -> index));
-      p -> next = head3;
-      return p;
-    }
-  head3 -> next = List_copy(head -> next);
-  return head3;*/
-
-  if(head == NULL)
-    {
-      Node * head2 = NULL;
-      return head2;
-    }
-  Node * head2 = List_create(head -> value, head -> index);
-  Node * p = head2;
-  head = head -> next;
+  Node * ptr = NULL;
   while (head != NULL)
     {
-      p -> next = List_create(head -> value, head -> index);
-      p = p -> next;
+      ptr = List_insert_ascend(ptr, head -> value, head -> index);
+      head = head -> next;
     }
-  return head2;
+    return ptr; 
 }
 
 
@@ -274,6 +238,10 @@ Node * List_merge(Node * head1, Node * head2)
   while (head2 != NULL)
     {
       head3 = List_insert_ascend(head3, head2 -> value, head2 -> index);
+      if (head3 -> value == 0)
+	{
+	  head3 = List_delete(head3, head3 -> index);
+	}
       head2 = head2 -> next;
     }
     

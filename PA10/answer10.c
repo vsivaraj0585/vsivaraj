@@ -130,6 +130,10 @@ void  array_copy(int * array, int * arr1, int len)
 
 void stackSort(int * array, int len)
 {
+  if((isStackSortable(array, len)) == FALSE)
+    {
+      return;
+    }
   int ind1 = 0;
   int ind2 = 0;
   Stack * stack = Stack_create();
@@ -275,11 +279,52 @@ int isStackSortable(int * array, int len)
  * The correct outputs for sizes [1..9] are in the 'expected' 
  * directory.
  */
-void genShapes(int k)
-{
 
+static void swap(int * a, int * b)
+{
+  int t = * a;
+  * a = * b;
+  * b = t;
+}
+ 
+static void permuteHelper(int * array, int len, int ind)
+ {
+   int check;
+   if(ind == len)
+     {
+       check = isStackSortable(array, len);
+       if(check == TRUE)
+	 {
+	   TreeNode * root = Tree_build(array, len);
+	   Tree_printShape(root);
+	   Tree_destroy(root);
+	 }
+     }
+   int pos;
+   for (pos = ind ; pos < len ; pos ++)
+     {
+       swap(&array[pos], &array[ind]); 
+       permuteHelper(array, len, ind + 1);
+       swap(&array[pos], &array[ind]); 
+     }
+ }
+
+void permute(int * array, int len)
+{
+  permuteHelper(array, len, 0);
 }
 
-
-
+void genShapes(int k)
+{
+  int * arr = malloc(sizeof(int)*k) ;
+  int lcv = 0;
+  
+  while(lcv < k)
+    {
+      arr[lcv] = lcv;
+      lcv++;
+    }
+  permute(arr, k);
+  free(arr);
+}
 
